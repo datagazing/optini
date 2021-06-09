@@ -16,7 +16,7 @@ optini
 
 
 
-Python class to hget options from command line and config file
+Python class to get options from command line and config file
 
 
 * Free software: MIT license
@@ -26,7 +26,34 @@ Python class to hget options from command line and config file
 Features
 --------
 
-* TODO
+* Get options from command line, config file, or defaults
+* Simple intuitive way to specify options
+* Provide reasonable logging defaults as an option (-v, -d, etc.)
+* Use conventions as defaults where possible
+
+Examples
+--------
+
+.. code-block:: python
+
+  import optini
+  spec = {
+      # boolean flag is the default type
+      'someopt': {
+          'help': 'set a flag',
+      },
+      'Another': {
+          'help': 'this option takes a string arg',
+          'type': str,
+      },
+  }
+  # implies -s and --someopt command line options
+  # implies -A and --Another command line options
+  confobj = optini.Config(appname="myapp", spec=spec, file=True)
+  # defaults to ~/.myapp.ini as config file
+  if optini.opt.someopt:
+      print("someopt flag is set")
+  print(optini.opt)
 
 Credits
 -------
