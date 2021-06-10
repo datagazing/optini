@@ -4,7 +4,7 @@ optini
 
 
 .. image:: https://img.shields.io/pypi/v/optini.svg
-        :target: https://pypi.python.org/pypi/optini
+        :target: https://pypi.org/project/optini/
 
 .. image:: https://img.shields.io/travis/datagazing/optini.svg
         :target: https://travis-ci.com/datagazing/optini
