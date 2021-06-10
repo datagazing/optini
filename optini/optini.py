@@ -119,7 +119,7 @@ class Config:
     In this example, -L will enable logging to file for the application.
     The user can override the default logfile using -F newfile.
 
-    Example a way to use the logging support:
+    Example way to use the logging support:
 
     .. code-block:: python
 
