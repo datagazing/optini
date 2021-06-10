@@ -28,7 +28,7 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
     ],
-    description="Python class to hget options from command line and config file",
+    description="Python class to get options from command line and config file",
     install_requires=requirements,
     license="MIT license",
     long_description=readme + '\n\n' + history,
