@@ -47,18 +47,21 @@ class Config:
         - Example: "verbose" => -v and --verbose
     - Most method operations occur during construction (consider "private")
 
-    Simple usage example::
+    Examples
+    --------
 
-        import optini
-        spec = {
-            'someopt': {
-                'help': 'set a flag',
-            },
-        }
-        # implies -s and --someopt command line options
-        confobj = optini.Config(spec=spec, file=True)
-        if optini.opt.someopt:
-            print("someopt flag is set")
+    .. code-block:: python
+
+      import optini
+      spec = {
+          'someopt': {
+              'help': 'set a flag',
+          },
+      }
+      # implies -s and --someopt command line options
+      confobj = optini.Config(spec=spec, file=True)
+      if optini.opt.someopt:
+          print("someopt flag is set")
 
     This defines one boolean option, someopt, which defaults to false;
     users can specify -s at the command line, or put someopt = true in
@@ -108,15 +111,17 @@ class Config:
     optini will derive the default log file name from appname (by
     appending .log).
 
-    Simple example::
+    .. code-block:: python
 
-        import optini
-        confobj = optini.Config(logging=True)
+      import optini
+      confobj = optini.Config(logging=True)
 
     In this example, -L will enable logging to file for the application.
     The user can override the default logfile using -F newfile.
 
-    Example of how I generally use the logging support::
+    Example a way to use the logging support:
+
+    .. code-block:: python
 
         import os
         myself = os.path.basename(__FILE__)
