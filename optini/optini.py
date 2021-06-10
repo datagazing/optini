@@ -360,7 +360,3 @@ class Config:
         ret.append(str(self.opt))
         return("\n".join(ret))
 
-# task: argparse help hint for non configfile options (asterisks?)
-# task: support option group aliases (so -a could be -TyhG)
-# task: incorporate type=argparse.FileType("r")
-# task: maybe support yaml spec input (what about embedded python objects?)
