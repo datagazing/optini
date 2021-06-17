@@ -2,6 +2,6 @@
 
 __author__ = """Brendan Strejcek"""
 __email__ = 'brendan@datagazing.com'
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 from .optini import Config, opt, spec, unparsed, section
