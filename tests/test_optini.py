@@ -5,7 +5,7 @@
 
 import unittest
 
-from optini import optini
+# from optini import optini
 
 
 class TestOptini(unittest.TestCase):

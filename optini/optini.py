@@ -1,13 +1,10 @@
 import argparse
 import configparser
 import copy
-import inspect
 import logging
 import os
 import pathlib
-import pprint
 import sys
-import typing
 
 import attr
 import dotmap
@@ -34,7 +31,7 @@ Global data structure storing top-level config options
 Example ini config file::
 
   top_level_option = topthing
-  
+
   [some_section]
   secondary_option = something
 
@@ -57,7 +54,7 @@ Global data structure storing secondary config options (ini section)
 Example ini config file::
 
   top_level_option = something
-  
+
   [some_section]
   secondary_option = something
 
@@ -108,13 +105,16 @@ _IOSPEC.output.default = sys.stdout
 
 # helper functions
 
+
 def log_spec(spec):
     """Procedure to log contents of spec, one message per item"""
     for optname, optconfig in spec.items():
         logger.debug(f"option: {optname}")
         [logger.debug(f"  {k} = {v}") for k, v in optconfig.items()]
 
+
 ########################################################################
+
 
 @attr.s(auto_attribs=True)
 class Config:
@@ -213,20 +213,18 @@ class Config:
     io: bool = False
     logging: bool = False
     skeleton: bool = True
-    #spec: typing.Dict = attr.Factory(dict)
     spec: bool = None
 
     def __attrs_post_init__(self):
         global _lock
         if _lock is not None:
-            logger.warning(f"configuration already initialized")
+            logger.warning('configuration already initialized')
             logger.warning('only top-level module should initialize config')
             logger.warning(f"lock held by {_lock}")
             logger.warning('cowardly refusing to proceed')
             return
         _lock = self.appname
         self.desc = self.description if self.description else self.desc
-        #self._set_appname()
         self._set_spec()
         # prepare option specification
         self._update_loggingspec()
@@ -238,22 +236,6 @@ class Config:
         self._merge()
         self._configure_logging()
 
-    def _set_appname(self):
-        # not being used; need to find a better introspection method
-        try:
-            if self.appname is None:
-                # default appname is filename of caller without extension
-                # some_script.py -> appname=some_script
-                # introspect name of calling code
-                self.appname = caller_stem()
-            logger.debug(f"appname = {self.appname}")
-        except:
-            # defend against fragile introspection
-            logger.debug(f"introspecting appname failed")
-            self.appname = 'SET_APPNAME_MANUALLY' 
-        # only top-level application should initialize config
-        _lock = self.appname
-
     def _set_spec(self):
         """Default to module-level spec variable for input"""
 
@@ -264,7 +246,7 @@ class Config:
         # optini.spec.path.help = 'File search path'
         # confobj = optini.Config(file=True)
         if self.spec is None:
-            logger.debug(f"no spec provided, using module-level spec")
+            logger.debug('no spec provided, using module-level spec')
             self.spec = spec
             log_spec(self.spec)
 
@@ -341,7 +323,7 @@ class Config:
         """
 
         if not type(spec) in {dict, dotmap.DotMap}:
-            logger.warning(f"expecting dict or dotmap.DotMap")
+            logger.warning('expecting dict or dotmap.DotMap')
             logger.warning(f"ignoring option specification: {spec}")
             return
 
@@ -372,7 +354,7 @@ class Config:
                 if 'default' not in optconfig:
                     spec[optname].default = None
 
-            logger.debug(f"processed option specification, prior to merge:")
+            logger.debug('processed option specification, prior to merge:')
             log_spec(spec)
         self._optspec.update(spec)
 
@@ -407,7 +389,7 @@ class Config:
         for optname, optconfig in self._optspec.items():
             # after _set_optspec(), all items should have a default
             opt[optname] = optconfig.default
-        logger.debug(f"final default option values:")
+        logger.debug('final default option values:')
         [logger.debug(f"  {k} = {v}") for k, v in opt.items()]
 
     def _parse_config_file(self):
@@ -430,7 +412,7 @@ class Config:
             if not os.path.exists(self.filename):
                 # create a skeleton config file
                 logger.debug(f"no such file: {self.filename}")
-                logger.debug(f"creating skeleton config file")
+                logger.debug('creating skeleton config file')
                 open(self.filename, 'w').write(self.skeleton_configfile())
         with open(self.filename) as f:
             # support options without an ini section header
@@ -504,10 +486,9 @@ class Config:
                     if 'configfile' in optconfig:
                         if not optconfig.configfile:
                             continue
-    
+
                     if optconfig.type is str:
                         opt[optname] = section.get(optname)
-                        #self.configparser['optini'].get(optname)
                     elif optconfig.type is int:
                         opt[optname] = section.getint(optname)
                     elif optconfig.type is float:
@@ -515,7 +496,7 @@ class Config:
                     elif optconfig.type is bool:
                         opt[optname] = section.getboolean(optname)
                     else:
-                        logger.warning(f"unable to process config file opt")
+                        logger.warning('unable to process config file opt')
                         logger.warning(f"specific issue: {optname}")
 
             logger.debug('merging in options from command line')
@@ -525,10 +506,10 @@ class Config:
                     # attempt to convert value to int
                     try:
                         opt[optname] = int(self._args[optname])
-                    except Exception as e:
-                        logger.warning(f"command line option type issue")
+                    except ValueError:
+                        logger.warning('command line option type issue')
                         logger.warning(f"option type mismatch: {optname}")
-                        logger.warning(f"ignoring type hint: int")
+                        logger.warning('ignoring type hint: int')
                         logger.warning(f"treating {optname} as str")
                         logger.debug(f"option spec: {self._optspec[optname]}")
                         opt[optname] = self._args[optname]
@@ -536,10 +517,10 @@ class Config:
                     # attempt to convert value to float
                     try:
                         opt[optname] = float(self._args[optname])
-                    except Exception as e:
-                        logger.warning(f"command line option type issue")
+                    except ValueError:
+                        logger.warning('command line option type issue')
                         logger.warning(f"option type mismatch: {optname}")
-                        logger.warning(f"ignoring type hint: float")
+                        logger.warning('ignoring type hint: float')
                         logger.warning(f"treating {optname} as str")
                         logger.debug(f"option spec: {self._optspec[optname]}")
                         opt[optname] = self._args[optname]
@@ -559,4 +540,3 @@ class Config:
         ret.append("\nconfigured options:")
         ret.append(str(self.opt))
         return("\n".join(ret))
-
