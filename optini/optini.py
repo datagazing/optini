@@ -27,9 +27,9 @@ Limitations
 Examples
 --------
 
-Defines one boolean option, someopt, which defaults to false; users can
+Define one boolean option, someopt, which defaults to false; users can
 specify -s at the command line, or put someopt = true in the config
-file. Config file defaults to ~/.<appname>.ini
+file.
 
 .. code-block:: python
 
@@ -40,6 +40,8 @@ file. Config file defaults to ~/.<appname>.ini
   optini.Config(appname='myapp', file=True, desc=desc)
   if optini.opt.someopt:
       print("someopt flag is set")
+
+Config file defaults to ~/.<appname>.ini
 
 Enable logging config:
 
@@ -201,30 +203,23 @@ class Config:
     """
     Class to get options from command line and config file
 
-    - Configuration hierarchy: command line > config file > defaults
-    - Interface is a module-level variable: optini.opt
-    - Access specific config options using DotMap attributes
-        - Example: optini.opt.verbose
-    - Config derives command line options from option names
-        - Example: "verbose" => -v and --verbose
-
     Examples
     --------
+
+    Define one boolean option, someopt, which defaults to false; users
+    can specify -s at the command line, or put someopt = true in the
+    config file.
 
     .. code-block:: python
 
       import optini
-      import dotmap
-      spec = dotmap.DotMap()
-      spec.someopt.help = 'Set a flag'
+      optinispec.someopt.help = 'Set a flag'
       # implies -s and --someopt command line options
-      confobj = optini.Config(spec=spec, file=True)
+      optini.Config(spec=spec, file=True)
       if optini.opt.someopt:
           print("someopt flag is set")
 
-    This defines one boolean option, someopt, which defaults to false;
-    users can specify -s at the command line, or put someopt = true in
-    the config file.
+    Config file defaults to ~/.<appname>.ini
 
     Attributes
     ----------
@@ -249,40 +244,6 @@ class Config:
         Create default config file if using config files
     spec : dotmap.DotMap or dict
         Mapping of option names to option configuration
-
-    Option Specification Format
-    ---------------------------
-
-    - Specify options by passing a dict of dicts (the spec attribute)
-    - The top level key is the option name
-    - optini recognizes the following second-level keys:
-        - help : str
-            - for argparse usage message, default config file comments
-        - type : type
-            - type hint for parsers (default is bool)
-        - default
-            - the default value for the option
-        - configfile : bool
-            - Specify False for command line only options
-        - short : str
-            - Short form command line option (example: -v)
-        - long : str
-            - Long form command line option (example: --verbose)
-
-    Logging
-    -------
-
-    Config has special support for configuring the standard logging
-    module using several (mostly) conventional options controlling
-    logs and verbosity (-v, -d, -q, -L and -F). Note: 'verbose' (-v)
-    corresponds to the INFO log level. The default log file name is
-    <appname>.log
-
-    .. code-block:: python
-
-      import optini
-      confobj = optini.Config(appname='something', logging=True)
-
     """
     appname: str
     description: str = None
@@ -296,6 +257,8 @@ class Config:
     spec: bool = None
 
     def __attrs_post_init__(self):
+        """Constructor"""
+
         global _lock
         if _lock is not None:
             logger.warning('configuration already initialized')

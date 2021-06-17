@@ -49,9 +49,9 @@ Limitations
 Examples
 --------
 
-Defines one boolean option, someopt, which defaults to false; users can
+Define one boolean option, someopt, which defaults to false; users can
 specify -s at the command line, or put someopt = true in the config
-file. Config file defaults to ~/.<appname>.ini
+file.
 
 .. code-block:: python
 
@@ -62,6 +62,8 @@ file. Config file defaults to ~/.<appname>.ini
   optini.Config(appname='myapp', file=True, desc=desc)
   if optini.opt.someopt:
       print("someopt flag is set")
+
+Config file defaults to ~/.<appname>.ini
 
 Enable logging config:
 
