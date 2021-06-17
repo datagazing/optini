@@ -26,10 +26,7 @@ logging.getLogger(myself).addHandler(logging.NullHandler())
 spec = dotmap.DotMap()
 """Empty dotmap object for ease of initialization"""
 
-unparsed = None
-"""Unparsed command line arguments returned by argparse"""
-
-opt = dotmap.DotMap()
+opt = dotmap.DotMap(_unparsed=None)
 """
 opt : dotmap.DotMap
 Global data structure storing top-level config options
@@ -110,13 +107,6 @@ _IOSPEC.output.default = sys.stdout
 ########################################################################
 
 # helper functions
-
-# yyy unreliable get rid of this
-def caller_stem():
-    """Introspect name of caller"""
-    caller = inspect.currentframe().f_back
-    fullpath = caller.f_globals['__file__']
-    return pathlib.Path(fullpath).stem
 
 def log_spec(spec):
     """Procedure to log contents of spec, one message per item"""
@@ -298,6 +288,7 @@ class Config:
         if opt.Log:
             handlers.append(logging.FileHandler(opt.File4log))
 
+        # yyy use a different format for optini logs
         format = f"{self.appname}: %(levelname)s: %(message)s"
 
         logging.basicConfig(
@@ -456,6 +447,7 @@ class Config:
         for sectname in self._configparser.sections():
             for optname in self._configparser.options(sectname):
                 logger.debug(f"self.filename: [{sectname}] {optname}")
+                # yyy might need to do something to get typed options
                 section[sectname][optname] = section.get(optname)
 
     def _parse_args(self):
@@ -493,8 +485,7 @@ class Config:
         # argparse returns (Namespace, list)
         parsed_args, unparsed_args = parser.parse_known_args()
         # save any remaining, unparsed command line arguments
-        global unparsed
-        unparsed = unparsed_args
+        opt._unparsed = unparsed_args
 
         self._args = dotmap.DotMap(vars(parsed_args))
 
