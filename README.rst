@@ -26,34 +26,78 @@ Python class to get options from command line and config file
 Features
 --------
 
-* Get options from command line, config file, or defaults
-* Simple intuitive way to specify options
-* Provide reasonable logging defaults as an option (-v, -d, etc.)
-* Use conventions as defaults where possible
+- Aggressively conventional defaults
+- Collect configuration from command line, config file, and defaults
+    - Configuration hierarchy: command line > config file > defaults
+- Interface is a module-level variable: optini.opt
+    - Module-level interface allows libraries to access config
+- Access config options through module-level dotmap interface
+    - Example: optini.opt.verbose
+- Derives command line options from option names
+    - Example: "verbose" => -v and --verbose
+- Single flag to support (mostly) conventional logging options
+    - (-v, -d, -q, -L, -F LOGFILE)
+- Single flag to support I/O options (-i input and -o output)
+- Supports top-level ini section without a header
+- Uses standard libraries under the hood (logging, argparse, configparser)
+
+Limitations
+-----------
+
+- Only top-level code (such as UI script) should initialize Config
 
 Examples
 --------
 
+Defines one boolean option, someopt, which defaults to false; users can
+specify -s at the command line, or put someopt = true in the config
+file. Config file defaults to ~/.<appname>.ini
+
 .. code-block:: python
 
   import optini
-  spec = {
-      # boolean flag is the default type
-      'someopt': {
-          'help': 'set a flag',
-      },
-      'Another': {
-          'help': 'this option takes a string arg',
-          'type': str,
-      },
-  }
+  optini.spec.someopt.help = 'Set a flag'
   # implies -s and --someopt command line options
-  # implies -A and --Another command line options
-  confobj = optini.Config(appname="myapp", spec=spec, file=True)
-  # defaults to ~/.myapp.ini as config file
+  desc = 'This code does a thing'
+  optini.Config(appname='myapp', file=True, desc=desc)
   if optini.opt.someopt:
       print("someopt flag is set")
-  print(optini.opt)
+
+Enable logging config:
+
+.. code-block:: python
+
+  import logging
+  import optini
+  confobj = optini.Config(appname='something', logging=True)
+  # the verbose (-v) option enables info messages
+  logging.info('this is an info message')
+  # the debug (-d) option enables info messages
+  logging.debug('this is a debug message')
+  # the Log (-L) option writes logs to file (default: <appname>.log)
+
+Option Specification Format
+---------------------------
+
+- Nested data structure (either dict or dotmap is valid)
+- The top level key is the option name
+- To configure each option, specify second level keys:
+    - help : str, default=None
+        - for argparse usage message, default config file comments
+    - type : type, default=bool
+        - type hint for parsers
+        - Supported: bool, str, int, float
+    - default, default=None
+        - the default value for the option
+    - required, default=False
+        - Declare the option mandatory at the command line
+    - short : str
+        - Short form command line option (example: -v)
+    - long : str
+        - Long form command line option (example: --verbose)
+    - configfile : bool
+        - Specify False for command line only options
+- Second level keys, apart from configfile, are passed to argparse
 
 Credits
 -------
