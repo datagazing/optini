@@ -71,7 +71,7 @@ Enable logging config:
 
   import logging
   import optini
-  confobj = optini.Config(appname='something', logging=True)
+  optini.Config(appname='something', logging=True)
   # the verbose (-v) option enables info messages
   logging.info('this is an info message')
   # the debug (-d) option enables debug messages
