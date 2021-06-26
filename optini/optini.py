@@ -1,3 +1,5 @@
+"""See top level package docstring for documentation"""
+
 import argparse
 import configparser
 import copy
