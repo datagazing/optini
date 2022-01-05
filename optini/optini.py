@@ -98,9 +98,9 @@ _LOGGINGSPEC = {
 _IOSPEC = dotmap.DotMap()
 _IOSPEC.input.type = argparse.FileType('r')
 _IOSPEC.input.default = sys.stdin
-_IOSPEC.input.help = 'input file'
+_IOSPEC.input.help = 'input file (default: stdin)'
 _IOSPEC.output.type = argparse.FileType('w')
-_IOSPEC.output.help = 'output file'
+_IOSPEC.output.help = 'output file (default: stdout)'
 _IOSPEC.output.default = sys.stdout
 
 ########################################################################
@@ -150,6 +150,8 @@ class Config:
         If not None, optini will use this in argparse usage message
     desc : str
         Alias for description
+    epilog : str
+        Text to display after the argument help
     file : bool (default: False)
         Enable config file
     filename : str (default: <appname>.ini)
@@ -169,6 +171,7 @@ class Config:
     description: str = None
     # use desc as the canonical value
     desc: str = None
+    epilog: str = None
     file: bool = False
     filename: str = None
     io: bool = False
@@ -233,8 +236,13 @@ class Config:
         if opt.Log:
             handlers.append(logging.FileHandler(opt.File4log))
 
-        # yyy use a different format for optini logs
-        format = f"{self.appname}: %(levelname)s: %(message)s"
+        format = f"{self.appname}: %(name)s: %(levelname)s: "
+        if opt.debug:
+            # yyy
+            # format += '%(pathname)s line %(lineno)s: %(message)s'
+            format += '%(message)s'
+        else:
+            format += '%(message)s'
 
         logging.basicConfig(
             level=loglevel,
@@ -398,7 +406,11 @@ class Config:
     def _parse_args(self):
         """Procedure to populate self._args from command line arguments"""
 
-        parser = argparse.ArgumentParser(description=self.desc)
+        parser = argparse.ArgumentParser(
+            description=self.desc,
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog=self.epilog,
+        )
 
         # derive add_argument kwargs from option specification
         for optname, optconfig in self._optspec.items():
