@@ -4,7 +4,7 @@ optini
 
 
 .. image:: https://img.shields.io/pypi/v/optini.svg
-        :target: https://pypi.org/project/optini/
+        :target: https://pypi.python.org/pypi/optini
 
 .. image:: https://img.shields.io/travis/datagazing/optini.svg
         :target: https://travis-ci.com/datagazing/optini
@@ -14,14 +14,7 @@ optini
         :alt: Documentation Status
 
 
-
-
-Python class to get options from command line and config file
-
-
-* Free software: MIT license
-* Documentation: https://optini.readthedocs.io.
-
+Class to get options from command line and config file
 
 Features
 --------
